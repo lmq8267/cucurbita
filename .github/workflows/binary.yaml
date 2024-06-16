@@ -3,6 +3,8 @@ name: binary
 on:
   push:
     branches: [ master ]
+  release:
+    types: [ published ]
 
 jobs:
   docker:
@@ -26,3 +28,8 @@ jobs:
       with:
         name: cucurbita-${{matrix.os}}-${{matrix.arch}}
         path: cucurbita-${{matrix.os}}-${{matrix.arch}}
+    - name: release
+      uses: softprops/action-gh-release@v2
+      if: github.event_name == 'release'
+      with:
+        files: cucurbita-${{matrix.os}}-${{matrix.arch}}
