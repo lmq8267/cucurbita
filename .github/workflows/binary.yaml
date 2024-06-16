@@ -1,0 +1,28 @@
+name: binary
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [freebsd,linux]
+        arch: [amd64,arm,arm64]
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: setup go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 'stable'
+    - name: go build
+      run: GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go build -o cucurbita-${{matrix.os}}-${{matrix.arch}}
+    - name: artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: cucurbita-${{matrix.os}}-${{matrix.arch}}
+        path: cucurbita-${{matrix.os}}-${{matrix.arch}}
